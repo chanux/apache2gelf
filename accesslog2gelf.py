@@ -4,19 +4,25 @@ import re
 import graypy
 import logging
 import argparse
+import settings
 
 # Copyright (c) 2012 Anton Tolchanov <me@knyar.net>
 # https://github.com/knyar/apache2gelf
 
-parser = argparse.ArgumentParser(description='Reads apache access log on stdin and delivers messages to graylog2 server via GELF',
+localname = settings.localname if hasattr(settings, 'localname') else None
+host = settings.host if hasattr(settings, 'host') else 'localhost'
+port = settings.port if hasattr(settings, 'port') else '12201'
+vhost = settings.vhost if hasattr(settings, 'vhost') else None
+
+parser = argparse.ArgumentParser(description='Reads apache error log on stdin and delivers messages to graylog2 server via GELF',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="Add the following to apache virtualhost configuration to use:\n" +
-        'CustomLog "||/path/to/accesslog2gelf.py" "%V %h %u \\"%r\\" %>s %b \\"%{Referer}i\\""')
-parser.add_argument('--localname', dest='localname', default=None, help='local host name (default: `hostname`)')
-parser.add_argument('--host', dest='host', default='localhost', help='graylog2 server hostname (default: localhost)')
-parser.add_argument('--port', dest='port', default='12201', help='graylog2 server port (default: 12201)')
+        'ErrorLog "||/path/to/errorlog2gelf.py')
+parser.add_argument('--localname', dest='localname', default=localname, help='local host name (default: `hostname`)')
+parser.add_argument('--host', dest='host', default=host, help='graylog2 server hostname (default: localhost)')
+parser.add_argument('--port', dest='port', default=port, help='graylog2 server port (default: 12201)')
 parser.add_argument('--facility', dest='facility', default='access_log', help='logging facility (default: access_log)')
-parser.add_argument('--vhost', dest='vhost', help='Add additional "vhost" field to all log records. This can be used to differentiate between virtual hosts.')
+parser.add_argument('--vhost', dest='vhost', default=vhost, help='Add additional "vhost" field to all log records. This can be used to differentiate between virtual hosts.')
 args = parser.parse_args()
 
 """The list of expected fields is hard-coded. Please feel free to change it

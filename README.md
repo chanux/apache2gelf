@@ -38,6 +38,11 @@ All scripts understand the following command line parameters:
 * `--facility` to specify log facility
 * `--vhost` to add an extra field called 'vhost' to all log messages. This allows you to configure per-virtualhost log handlers (on the expense of running N additional processes, of course) and then filter logs in graylog2 accordingly.
 
+Settings file
+-------------
+localname, host, port and vhost can be set in the settings.py file and shared between the three scripts.
+If the options are passed as command line parameters, they will be used instead of the values in settings file.
+
 accesslog2gelf.py
 -----------------
 
